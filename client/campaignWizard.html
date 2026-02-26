@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Creation Wizard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Create a New Campaign</h1>
+        <form id="campaignForm">
+            <label for="campaignName">Campaign Name:</label>
+            <input type="text" id="campaignName" name="campaignName" required>
+
+            <label for="campaignDescription">Description:</label>
+            <textarea id="campaignDescription" name="campaignDescription" required></textarea>
+
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" name="startDate" required>
+
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" name="endDate" required>
+
+            <button type="submit">Create Campaign</button>
+        </form>
+        <div id="message"></div>
+    </div>
+    <script>
+        document.getElementById('campaignForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const campaignData = {
+                name: document.getElementById('campaignName').value,
+                description: document.getElementById('campaignDescription').value,
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value
+            };
+
+            try {
+                const response = await fetch('/api/campaigns', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(campaignData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+
+                const result = await response.json();
+                document.getElementById('message').innerText = 'Campaign created successfully: ' + result.id;
+            } catch (error) {
+                document.getElementById('message').innerText = 'Error creating campaign: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>
